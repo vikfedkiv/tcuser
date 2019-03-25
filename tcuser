@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#Get IP address
+ifconfig en0 | grep inet | grep -v inet6 | awk '{print $2}'
+
+#Get username
+echo "$USER"
+
+#Get hostname
+hostname
